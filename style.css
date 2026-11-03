@@ -1,0 +1,110 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 0 16px;
+  line-height: 1.5;
+  background: #282a92;
+  color: #f4f7f9;
+}
+
+h1 {
+  color: #8fc1ec;
+  margin-bottom: 0;
+}
+
+h2 {
+  color: #8fc1ec;
+  font-size: 1.15rem;
+  margin: 28px 0 8px;
+}
+
+a {
+  color: #f4f7f9;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tip {
+  background: #eef4fa;
+  border-left: 4px solid #4e89bd;
+  padding: 8px 12px;
+  color: #282a92;
+}
+
+.small {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+#summary {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+#summary.warning {
+  background: #fff3cd;
+  color: #6b4b00;
+  padding: 10px 12px;
+  border-radius: 4px;
+}
+
+.reps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reps li {
+  background: #ffffff;
+  color: #1e293b;
+  border-left: 6px solid #94a3b8;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.reps li.pass { border-left-color: #2e9e5b; }
+.reps li.almost { border-left-color: #e0a800; }
+.reps li.fail { border-left-color: #e06c75; }
+.reps li.todo { color: #475569; }
+
+.topics {
+  list-style: none;
+  padding: 0;
+}
+
+.topics li {
+  background: #ffffff;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.topics a {
+  display: block;
+  padding: 12px 16px;
+  color: #282a92;
+  text-decoration: none;
+}
+
+.topics a:hover,
+.topics a:focus {
+  outline: 3px solid #8fc1ec;
+}
+
+.topics span {
+  display: block;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+code {
+  background: #f0f0f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #282a92;
+}
