@@ -45,6 +45,8 @@ function isNotFound(status) {
 
 // Rep 1: write a function called isOk(status) that returns true for 200 to 299, and false otherwise.
 // (That's exactly what response.ok tells you.)
+// New: >= means "at least", <= means "at most", and && means AND (both sides must be true).
+//   Example: price >= 2 && price <= 10   is true for 2, 5 and 10, false for 1 and 12.
 //   isOk(200) → true    isOk(201) → true    isOk(404) → false    isOk(500) → false
 
 // Rep 2: write a function called statusMessage(status) that returns:
