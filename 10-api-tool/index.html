@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kata 10: API Tool</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <p class="nav"><a href="../index.html">All katas</a></p>
+    <h1>Kata 10: API Tool</h1>
+    <p>Requests to make in Postman or Bruno: status codes, query params, bodies, and bad requests</p>
+    <p class="tip">
+      This kata happens in your API tool (<strong>Postman</strong> or <strong>Bruno</strong> in VS Code), so you check yourself.<br />
+      Make a new collection called <strong>Katas</strong>. For each request: <strong>predict</strong> what you'll get,
+      Send, then open <strong>Show what you should see</strong>. Tick the box when yours matches.<br />
+      Postman's JSON hard to read? GET requests also work in a browser tab.
+    </p>
+
+    <p id="summary"></p>
+
+    <h2>Drill A: GET and status codes</h2>
+    <ul class="requests">
+      <li>
+        <label><input type="checkbox" data-rep="a1" /> Rep 1: One recipe</label>
+        <code class="url">GET https://dummyjson.com/recipes/1</code>
+        Predict: what's the status? How many ingredients?
+        <details><summary>Show what you should see</summary>
+          <code>200 OK</code>. The name is <code>"Classic Margherita Pizza"</code>, and <code>ingredients</code> has 6 items.
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="a2" /> Rep 2: A recipe that doesn't exist</label>
+        <code class="url">GET https://dummyjson.com/recipes/9999</code>
+        Predict: what's the status?
+        <details><summary>Show what you should see</summary>
+          <code>404 Not Found</code>, and a message: <code>"Recipe with id '9999' not found"</code>.
+          The server still answered, so in JavaScript <code>fetch</code> works and <code>response.ok</code> is false.
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="a3" /> Rep 3: Look at the headers</label>
+        Send Rep 1 again. In the response, open the <strong>Headers</strong> tab and find <code>content-type</code>.
+        <details><summary>Show what you should see</summary>
+          <code>application/json</code>. That's the server saying "the body is JSON", which is why <code>response.json()</code> works.
+        </details>
+      </li>
+    </ul>
+
+    <h2>Drill B: query params (the part after ?)</h2>
+    <ul class="requests">
+      <li>
+        <label><input type="checkbox" data-rep="b1" /> Rep 1: Just 3 recipes</label>
+        <code class="url">GET https://dummyjson.com/recipes?limit=3</code>
+        Then open the <strong>Params</strong> tab (Bruno: <strong>Query</strong>). Change 3 to 5 there and Send.
+        <details><summary>Show what you should see</summary>
+          <code>200</code>, a <code>recipes</code> list with 3 items, and <code>"total": 50</code>.
+          Changing the Params tab changes the URL too: <code>limit=5</code> gives 5 recipes.
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="b2" /> Rep 2: Search</label>
+        <code class="url">GET https://dummyjson.com/recipes/search?q=pizza</code>
+        Predict: how many pizzas?
+        <details><summary>Show what you should see</summary>
+          <code>200</code> and <code>"total": 2</code>: Classic Margherita Pizza (id 1) and Italian Margherita Pizza (id 45).
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="b3" /> Rep 3: Search for nothing</label>
+        Change <code>q=pizza</code> to <code>q=taco</code>. Predict: 200 or 404?
+        <details><summary>Show what you should see</summary>
+          <code>200</code> with <code>"recipes": []</code> and <code>"total": 0</code>.
+          An empty list isn't an error! The search worked, it just found nothing. Your page should still say so ("No recipes found").
+        </details>
+      </li>
+    </ul>
+
+    <h2>Drill C: POST and the body</h2>
+    <ul class="requests">
+      <li>
+        <label><input type="checkbox" data-rep="c1" /> Rep 1: Add a dish</label>
+        <code class="url">POST https://dummyjson.com/recipes/add</code>
+        Body → <strong>JSON</strong> (Postman: Body → raw → JSON):
+        <code class="url">{ "name": "Taco Rocket Special" }</code>
+        <details><summary>Show what you should see</summary>
+          <code>201 Created</code> and <code>{"id": 51, "name": "Taco Rocket Special"}</code>.
+          (It's a practice server, so it doesn't really save it.)
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="c2" /> Rep 2: Forget to switch to POST</label>
+        Same URL and body, but change the method back to <strong>GET</strong>. Predict first!
+        <details><summary>Show what you should see</summary>
+          <code>404</code> and <code>"Recipe with id 'add' not found"</code>. A GET reads <code>add</code> as a recipe number.
+          In JavaScript, this is what happens when you forget <code>method: "POST"</code>.
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="c3" /> Rep 3: Send the body as Text</label>
+        Back to <strong>POST</strong>. Change the body type from JSON to <strong>Text</strong> (same words), and Send.
+        <details><summary>Show what you should see</summary>
+          <code>201</code>, but only <code>{"id": 51}</code>. <strong>The name is gone!</strong>
+          The server didn't know the body was JSON, so it ignored it.
+          In JavaScript, that's a missing <code>"Content-Type": "application/json"</code> header.
+        </details>
+      </li>
+    </ul>
+
+    <h2>Drill D: a different API (Open-Meteo weather)</h2>
+    <ul class="requests">
+      <li>
+        <label><input type="checkbox" data-rep="d1" /> Rep 1: The temperature</label>
+        <code class="url">GET https://api.open-meteo.com/v1/forecast?latitude=30.27&amp;longitude=-97.74&amp;current=temperature_2m</code>
+        Find <code>current_units</code>. What unit is the temperature in?
+        <details><summary>Show what you should see</summary>
+          <code>200</code> and <code>"temperature_2m": "°C"</code> (Celsius).
+          Now add a param in the Params tab: <code>temperature_unit</code> = <code>fahrenheit</code>. Send: <code>"°F"</code>.
+        </details>
+      </li>
+      <li>
+        <label><input type="checkbox" data-rep="d2" /> Rep 2: A bad param</label>
+        Change <code>latitude</code> to <code>999</code>. Predict: what's the status?
+        <details><summary>Show what you should see</summary>
+          <code>400 Bad Request</code> and a reason: <code>"Latitude must be in range of -90 to 90°. Given: 999.0."</code>
+          400s mean <em>you</em> asked wrong. Good APIs tell you what to fix.
+        </details>
+      </li>
+    </ul>
+
+    <p class="tip">
+      <strong>Your turn (no answers here):</strong> make one GET to an API you picked in Week 5
+      (PokeAPI, PotterAPI, GitHub users, NASA images). Find one field you'd show on a page,
+      and make one request that gives a 404.
+    </p>
+
+    <p class="small">Your ticks are saved in this browser only.
+      <button id="reset" type="button">Clear my ticks</button></p>
+
+    <p class="nav"><a href="../09-bootstrap/index.html">← Kata 9: Bootstrap</a> </p>
+
+    <script>
+      // Remembers your ticks in this browser (not on GitHub).
+      const boxes = document.querySelectorAll("input[data-rep]");
+      const summary = document.getElementById("summary");
+
+      function loadTicks() {
+        try {
+          return JSON.parse(localStorage.getItem("kata10-ticks")) || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveTicks(ticks) {
+        try {
+          localStorage.setItem("kata10-ticks", JSON.stringify(ticks));
+        } catch (error) {
+          // Can't save here. The boxes still work until you reload.
+        }
+      }
+
+      function showCount() {
+        let done = 0;
+        boxes.forEach(function (box) {
+          box.closest("li").classList.toggle("done", box.checked);
+          if (box.checked) done = done + 1;
+        });
+        summary.textContent = done + " of " + boxes.length + " requests matched.";
+        if (done === boxes.length) summary.textContent += " 🎉 Every request done!";
+      }
+
+      const ticks = loadTicks();
+      boxes.forEach(function (box) {
+        box.checked = ticks[box.dataset.rep] === true;
+        box.addEventListener("change", function () {
+          ticks[box.dataset.rep] = box.checked;
+          saveTicks(ticks);
+          showCount();
+        });
+      });
+
+      document.getElementById("reset").addEventListener("click", function () {
+        boxes.forEach(function (box) {
+          box.checked = false;
+          ticks[box.dataset.rep] = false;
+        });
+        saveTicks(ticks);
+        showCount();
+      });
+
+      showCount();
+    </script>
+  </body>
+</html>

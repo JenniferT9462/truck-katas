@@ -59,7 +59,18 @@ function checkCalls(fn, cases) {
 
 const icons ={ pass: "✅", todo: "⬜", almost: "🟡", fail: "❌" };
 
-function runKatas() {
+// Waits for a test that returns a Promise (Kata 8). Gives up after 3 seconds.
+function waitForResult(result) {
+  if (!result || typeof result.then !== "function") return result;
+  const tooSlow = new Promise(function (resolve) {
+    setTimeout(function () {
+      resolve(fail("It never finished. Is something waiting on an answer that never comes?"));
+    }, 3000);
+  });
+  return Promise.race([result, tooSlow]);
+}
+
+async function runKatas() {
   const results = document.getElementById("results");
   const summary = document.getElementById("summary");
 
@@ -77,7 +88,9 @@ function runKatas() {
   let total = 0;
   let currentList = null;
 
-  kataList.forEach(function (entry) {
+  summary.textContent = "Checking...";
+
+  for (const entry of kataList) {
     if (entry.heading) {
       const h2 = document.createElement("h2");
       h2.textContent = entry.heading;
@@ -85,12 +98,12 @@ function runKatas() {
       currentList = document.createElement("ul");
       currentList.className = "reps";
       results.appendChild(currentList);
-      return;
+      continue;
     }
 
     let result;
     try {
-      result = entry.test();
+      result = await waitForResult(entry.test());
     } catch (error) {
       if (error instanceof ReferenceError) {
         result = todo("Not found yet: " + error.message + ". Already started? Check the spelling and capitals.");
@@ -117,9 +130,9 @@ function runKatas() {
       li.appendChild(note);
     }
     currentList.appendChild(li);
-  });
+  }
 
   summary.textContent = passed + " of " + total + " reps passed.";
-  if (passed === total) summary.textContent += " 🎉 Every rep done! Try start-over.js for another round.";
+  if (passed === total) summary.textContent += " 🎉 Every rep done! Want another round? Use the start-over copy.";
   console.log("Katas:", passed, "of", total, "reps passed");
 }
